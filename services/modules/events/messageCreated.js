@@ -1,5 +1,6 @@
 // Imports
 const { Events, ActivityType } = require('discord.js');
+const utils = require("util");
 
 // Services
 const user_service = global.pathFinderOfService("user_service");
@@ -27,20 +28,25 @@ module.exports = {
         });
 
         if(!msg.member.botOwner) if(msg.author.id != "409422082611347457") return;
-        let cmd = args.shift().toLowerCase();
-        if(cmd = "eval") {
-            const prefix = "!";
-            let args = msg.content
-                .slice(prefix.length)
-                .trim()
-                .split(/ +/g);
+
+        const prefix = "!";
+        const args = msg.content
+            .slice(prefix.length)
+            .trim()
+            .split(/ +/g);
+
+        const cmd = args.shift().toLowerCase();
+        if(cmd == "eval") {
             if(!args[0]) return msg.reply("Mat provide arguments.")
             try {
                 const code = args.join(" ");
                 let evaled = eval(code);
 
                 if (typeof evaled !== "string")
-                evaled = require("util").inspect(evaled);
+                evaled = await utils.inspect(evaled);
+
+                await msg.channel.send((evaled), { code:"xl" });
+                await msg.delete()
             } catch (err) {
                 msg.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
             }

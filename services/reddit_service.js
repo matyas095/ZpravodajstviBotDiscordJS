@@ -31,7 +31,6 @@ class RedditService {
     };
 
     async runRequest(url) {
-        console.log(this.access_token);
         const data = {
             headers: {
                 "Content-Type": "application/json",
