@@ -9,6 +9,7 @@ const {
 const postgres_Service = require("../../postgres_service.js");
 const commands_Service = require("../../commands_service.js");
 const userService = require("../../user_service.js");
+const reddit_service = global.pathFinderOfService("reddit_service");
 const config = require("../../../config/config.js");
 
 const SongPlayer = require("../../song_service.js");
