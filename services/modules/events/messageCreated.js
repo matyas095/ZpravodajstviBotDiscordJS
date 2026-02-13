@@ -6,6 +6,13 @@ const utils = require("util");
 const user_service = global.pathFinderOfService("user_service");
 const { UsersRepository } = require(global.returnPathToService("postgres_service")).repositories;
 
+function clean(text) {
+  if (typeof(text) === "string")
+    return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
+  else
+      return text;
+}
+
 module.exports = {
     name: Events.MessageCreate,
     once: false,
@@ -46,10 +53,10 @@ module.exports = {
                 evaled = await utils.inspect(evaled);
 
                 await msg.channel.send((evaled), { code:"xl" });
-                await msg.delete()
+                await msg.delete();
             } catch (err) {
                 msg.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
-            }
-        }
+            };
+        };
     },
 };

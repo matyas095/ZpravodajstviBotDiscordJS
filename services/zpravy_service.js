@@ -39,23 +39,25 @@ async function setupThreads(channels, guildRoles) {
         if (!channel) continue;
 
         let threads = await channel.threads.fetch();
+        let archivedThreads = await channel.threads.fetchArchived();
 
         if (global.configEnves.DESTROY_ZPRAVY_THREADS_ON_INIT === "TRUE") {
             for (const [, thread] of threads.threads) {
                 await thread.delete("Cleansing").catch(() => { });
             };
             threads = await channel.threads.fetch();
+            archivedThreads = await channel.threads.fetchArchived();
         };
-        await processThreads(obj, channel, threads, membersToBeAddedByRole);
+        await processThreads(obj, channel, threads, archivedThreads, membersToBeAddedByRole);
     };
 };
 
-async function processThreads(obj, channel, threads, membersToBeAddedByRole) {
+async function processThreads(obj, channel, threads, archivedThreads, membersToBeAddedByRole) {
     const created = [];
 
     for (const threadKey of Object.keys(obj)) {
         const wantedName = obj[threadKey].option.name;
-        const existing = [...threads.threads.values()].find(t => t.name === wantedName);
+        const existing = [...threads.threads.values()].find(t => t.name === wantedName) || [...archivedThreads.threads.values()].find(t => t.name === wantedName);
         if (existing) { module.exports.threads[threadKey] = existing; continue; }
 
         const thread = await channel.threads.create(obj[threadKey].option);
